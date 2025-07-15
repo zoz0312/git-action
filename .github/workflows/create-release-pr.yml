@@ -43,7 +43,7 @@ jobs:
           git checkout "$BRANCH"
           echo "🔖 This is a temporary release commit for $TAG" > .release_placeholder
           git add .release_placeholder
-          git commit -m "create release: add placeholder for $TAG"
+          git commit -m "[TEMP] $TAG"
           git push origin "$BRANCH"
 
       - name: Install GitHub CLI
@@ -58,16 +58,13 @@ jobs:
           echo "" >> TEMP_RELEASE_NOTE.md
           echo "**릴리즈 브랜치**: \`$BRANCH\`" >> TEMP_RELEASE_NOTE.md
           echo "**생성일**: $(date '+%Y-%m-%d %H:%M:%S')" >> TEMP_RELEASE_NOTE.md
-          echo "" >> TEMP_RELEASE_NOTE.md
-          echo "### 변경 이력 (develop → $BRANCH):" >> TEMP_RELEASE_NOTE.md
-          git log origin/$BRANCH..origin/develop --pretty=format:"- %s" >> TEMP_RELEASE_NOTE.md
           echo "📝 작성된 릴리즈 노트:"
           cat TEMP_RELEASE_NOTE.md
 
       - name: Create Pull Request (develop → ${{ env.BRANCH }})
         run: |
           gh pr create \
-            --title "create release: $TAG 준비" \
+            --title "[$TAG] 릴리즈 PR" \
             --body-file TEMP_RELEASE_NOTE.md \
             --base develop \
             --head "$BRANCH" \
