@@ -69,8 +69,8 @@ jobs:
           gh pr create \
             --title "create release: $TAG 준비" \
             --body-file TEMP_RELEASE_NOTE.md \
-            --base "$BRANCH" \
-            --head "develop" \
+            --base develop \
+            --head "$BRANCH" \
             --label "release,auto" \
             --reviewer "${{ github.actor }}"
         env:
