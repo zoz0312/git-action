@@ -41,14 +41,29 @@ jobs:
       - name: Install GitHub CLI
         run: |
           sudo apt update
-          sudo apt install gh -y
+          sudo apt install -y gh
+
+      - name: Generate release note (temporary file)
+        id: changelog
+        run: |
+          echo "## Release $TAG" > TEMP_RELEASE_NOTE.md
+          echo "" >> TEMP_RELEASE_NOTE.md
+          echo "**릴리즈 브랜치**: \`$BRANCH\`" >> TEMP_RELEASE_NOTE.md
+          echo "**생성일**: $(date '+%Y-%m-%d %H:%M:%S')" >> TEMP_RELEASE_NOTE.md
+          echo "" >> TEMP_RELEASE_NOTE.md
+          echo "### 변경 이력 (develop → $BRANCH):" >> TEMP_RELEASE_NOTE.md
+          git log origin/$BRANCH..origin/develop --pretty=format:"- %s" >> TEMP_RELEASE_NOTE.md
+          echo "📝 작성된 릴리즈 노트:"
+          cat TEMP_RELEASE_NOTE.md
 
       - name: Create Pull Request (develop → ${{ env.BRANCH }})
         run: |
           gh pr create \
             --title "chore(release): $TAG 준비" \
-            --body "자동 생성된 릴리즈 PR입니다.\n\n- 태그: $TAG\n- 브랜치: $BRANCH" \
+            --body-file TEMP_RELEASE_NOTE.md \
             --base "$BRANCH" \
-            --head "develop"
+            --head "develop" \
+            --label "release,auto,chore" \
+            --reviewer "${{ github.actor }}"
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }} # 개인 액세스 토큰 사용 필수
