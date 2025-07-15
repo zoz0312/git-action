@@ -38,6 +38,13 @@ jobs:
           git checkout -b "$BRANCH"
           git push origin "$BRANCH"
 
+      - name: Add dummy commit to release branch
+        run: |
+          echo "🔖 This is a temporary release commit for $TAG" > .release_placeholder
+          git add .release_placeholder
+          git commit -m "create release: add placeholder for $TAG"
+          git push origin "$BRANCH"
+
       - name: Install GitHub CLI
         run: |
           sudo apt update
