@@ -21,19 +21,20 @@ jobs:
       BRANCH: release/${{ github.event.inputs.tag }}
 
     steps:
-      - name: Checkout develop branch
+      - name: Checkout repo with full history
         uses: actions/checkout@v4
         with:
-          ref: develop
           fetch-depth: 0
+          ref: develop
 
-      - name: Configure Git
+      - name: Configure Git identity
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: Create release branch from develop
+      - name: Ensure develop branch and create release branch
         run: |
+          git checkout develop
           git checkout -b "$BRANCH"
           git push origin "$BRANCH"
 
@@ -50,3 +51,4 @@ jobs:
               "draft": false
             }
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
