@@ -51,4 +51,4 @@ jobs:
             --base "$BRANCH" \
             --head "develop"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
