@@ -59,11 +59,11 @@ jobs:
       - name: Create Pull Request (develop → ${{ env.BRANCH }})
         run: |
           gh pr create \
-            --title "chore(release): $TAG 준비" \
+            --title "create release: $TAG 준비" \
             --body-file TEMP_RELEASE_NOTE.md \
             --base "$BRANCH" \
             --head "develop" \
-            --label "release,auto,chore" \
+            --label "release,auto" \
             --reviewer "${{ github.actor }}"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # 개인 액세스 토큰 사용 필수
