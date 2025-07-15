@@ -1,7 +1,7 @@
 name: Deploy
 
 on:
-  push:  # 어떤 브랜치든 push되면 시작. (환경에서 브랜치 제한)
+  push: # 어떤 브랜치든 push되면 시작. (환경에서 브랜치 제한)
     branches:
       # - '**'
       - 'develop'
@@ -26,6 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Enable corepack & prepare pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
         run: pnpm install
