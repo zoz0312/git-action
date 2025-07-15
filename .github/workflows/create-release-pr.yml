@@ -1,4 +1,4 @@
-name: Create release branch and PR
+name: 릴리즈 PR 생성
 
 on:
   workflow_dispatch:
@@ -66,7 +66,7 @@ jobs:
       - name: Create Pull Request (develop → ${{ env.BRANCH }})
         run: |
           gh pr create \
-            --title "[$TAG] 릴리즈 PR" \
+            --title "release/$TAG" \
             --body-file TEMP_RELEASE_NOTE.md \
             --base develop \
             --head "$BRANCH" \

@@ -1,0 +1,39 @@
+name: Deploy
+
+on:
+  push:  # 어떤 브랜치든 push되면 시작. (환경에서 브랜치 제한)
+    branches:
+      # - '**'
+      - 'develop'
+      - 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # GitHub Environment는 환경 변수와 브랜치 접근 제어를 담당
+    environment:
+      name: ${{ github.ref_name }}  # 예: develop, main
+
+    env:
+      MODE: ${{ vars.MODE }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+        env:
+          NODE_ENV: ${{ env.MODE }}
+
+      - name: Deploy
+        run: echo "🚀 Deployed in $MODE mode from ${{ github.ref_name }}"
