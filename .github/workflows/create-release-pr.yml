@@ -21,34 +21,32 @@ jobs:
       BRANCH: release/${{ github.event.inputs.tag }}
 
     steps:
-      - name: Checkout repo with full history
+      - name: Checkout develop branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: develop
 
-      - name: Configure Git identity
+      - name: Configure Git
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: Ensure develop branch and create release branch
+      - name: Create release branch from develop
         run: |
           git checkout develop
           git checkout -b "$BRANCH"
           git push origin "$BRANCH"
 
+      - name: Install GitHub CLI
+        uses: cli/cli-action@v1
+
       - name: Create Pull Request (develop → ${{ env.BRANCH }})
-        uses: octokit/request-action@v2.x
-        with:
-          route: POST /repos/${{ github.repository }}/pulls
-          parameters: |
-            {
-              "title": "chore(release): ${{ env.TAG }} 준비",
-              "head": "develop",
-              "base": "${{ env.BRANCH }}",
-              "body": "자동 생성된 릴리즈 PR입니다.\\n\\n- 태그: ${{ env.TAG }}\\n- 브랜치: ${{ env.BRANCH }}",
-              "draft": false
-            }
+        run: |
+          gh pr create \
+            --title "chore(release): $TAG 준비" \
+            --body "자동 생성된 릴리즈 PR입니다.\n\n- 태그: $TAG\n- 브랜치: $BRANCH" \
+            --base "$BRANCH" \
+            --head "develop"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
