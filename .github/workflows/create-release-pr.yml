@@ -40,6 +40,7 @@ jobs:
 
       - name: Add dummy commit to release branch
         run: |
+          git checkout "$BRANCH"
           echo "🔖 This is a temporary release commit for $TAG" > .release_placeholder
           git add .release_placeholder
           git commit -m "create release: add placeholder for $TAG"
