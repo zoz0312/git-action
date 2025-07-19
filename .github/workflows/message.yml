@@ -36,7 +36,8 @@ jobs:
           
           curl -X POST "$DISCORD_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d '{
+            -d @- <<EOF 
+          {
               "embeds": [
                 {
                   "title": "$TITLE",
@@ -54,4 +55,5 @@ jobs:
                   "timestamp": "'"$(date --iso-8601=seconds)"'"
                 }
               ]
-            }'
+            }
+          EOF
