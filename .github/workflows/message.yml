@@ -1,8 +1,13 @@
 name: message.yml
 on:
+  workflow_call:
+    inputs:
+      message:
+        required: true
+        type: string
 
 jobs:
-  webhook:
+  discord:
     runs-on: ubuntu-latest
     steps:
       - name: Send Discord Webhook Message
@@ -11,6 +16,4 @@ jobs:
         run: |
           curl -X POST "$DISCORD_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d '{
-              "content": "✅ Deploy 완료되었습니다! 🎉"
-            }'
+            -d "{\"content\": \"${{ inputs.message }}\"}"

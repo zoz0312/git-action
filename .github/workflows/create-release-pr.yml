@@ -77,10 +77,6 @@ jobs:
 
   notify:
     needs: create-release-pr
-    if: ${{ success() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger message.yml
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: message.yml
+    uses: ./.github/workflows/message.yml
+    with:
+      message: "✅ 릴리즈 PR 생성 🎉"
