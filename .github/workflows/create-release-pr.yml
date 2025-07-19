@@ -74,3 +74,13 @@ jobs:
             --reviewer "${{ github.actor }}"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }} # 개인 액세스 토큰 사용 필수
+
+  notify:
+    needs: create-release-pr
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger message.yml
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: message.yml

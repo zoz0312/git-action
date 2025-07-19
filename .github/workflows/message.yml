@@ -1,0 +1,16 @@
+name: message.yml
+on:
+
+jobs:
+  webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Webhook Message
+        env:
+          DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/1396143329846104215/fy-D5I-EUYZ1NL4x4xR42hC1KFSDN_VrCT4S_G_w10IfJLHTlScC8sCWEyBa8Ly6euyZ"
+        run: |
+          curl -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "content": "✅ Deploy 완료되었습니다! 🎉"
+            }'
