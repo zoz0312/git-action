@@ -34,26 +34,30 @@ jobs:
             COLOR=9807270 # 회색
           fi
           
-          curl -X POST "$DISCORD_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d @- <<EOF 
-          {
-              "embeds": [
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          TIME_NOW=$(date +'%Y-%m-%d %H:%M:%S')
+        
+          PAYLOAD=$(jq -n \
+          --arg title "$TITLE" \
+          --arg desc "$DESC" \
+          --arg time "$TIME_NOW" \
+          --arg timestamp "$TIMESTAMP" \
+          --argjson color "$COLOR" \
+          '{
+              embeds: [
                 {
-                  "title": "$TITLE",
-                  "description": "$DESC",
-                  "color": $COLOR,
-                  "fields": [
-                    {
-                      "name": "시간",
-                      "value": "'"$(date +'%Y-%m-%d %H:%M:%S')"'"
-                    }
+                  title: $title,
+                  description: $desc,
+                  color: $color,
+                  fields: [
+                    { name: "시간", value: $time }
                   ],
-                  "footer": {
-                    "text": "Gitbub CI/CD"
-                  },
-                  "timestamp": "'"$(date --iso-8601=seconds)"'"
+                  footer: { text: "GitHub CI/CD" },
+                  timestamp: $timestamp
                 }
               ]
-            }
-          EOF
+            }')
+        
+          echo "$PAYLOAD" | curl -X POST "$DISCORD_WEBHOOK_URL" \
+          -H "Content-Type: application/json" \
+          -d @-
