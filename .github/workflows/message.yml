@@ -2,8 +2,14 @@ name: message.yml
 on:
   workflow_call:
     inputs:
-      message:
+      title:
         required: true
+        type: string
+      description:
+        required: true
+        type: string
+      type:
+        required: false
         type: string
 
 jobs:
@@ -13,7 +19,39 @@ jobs:
       - name: Send Discord Webhook Message
         env:
           DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/1396143329846104215/fy-D5I-EUYZ1NL4x4xR42hC1KFSDN_VrCT4S_G_w10IfJLHTlScC8sCWEyBa8Ly6euyZ"
+          TITLE: ${{ inputs.title }}
+          DESC: ${{ inputs.description }}
+          TYPE: ${{ inputs.type || 'success' }}
         run: |
+          
+          if [ "$TYPE" = "success" ]; then
+            COLOR=3066993 # 초록
+          elif [ "$TYPE" = "failure" ]; then
+            COLOR=15158332 # 빨강
+          elif [ "$TYPE" = "warning" ]; then
+            COLOR=16776960 # 노랑
+          else
+            COLOR=9807270 # 회색
+          fi
+          
           curl -X POST "$DISCORD_WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d "{\"content\": \"${{ inputs.message }}\"}"
+            -d '{
+              "embeds": [
+                {
+                  "title": "$TITLE",
+                  "description": "$DESC",
+                  "color": $COLOR,
+                  "fields": [
+                    {
+                      "name": "시간",
+                      "value": "'"$(date +'%Y-%m-%d %H:%M:%S')"'"
+                    }
+                  ],
+                  "footer": {
+                    "text": "Gitbub CI/CD"
+                  },
+                  "timestamp": "'"$(date --iso-8601=seconds)"'"
+                }
+              ]
+            }'

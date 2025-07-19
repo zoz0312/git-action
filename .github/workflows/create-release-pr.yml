@@ -79,4 +79,6 @@ jobs:
     needs: create-release-pr
     uses: ./.github/workflows/message.yml
     with:
-      message: "✅ 릴리즈 PR 생성 🎉"
+      title: "${{ env.BRANCH }} 릴리즈 PR 생성"
+      description: "✅ ${{ github.actor }}가 릴리즈 PR을 생성하였습니다 🎉"
+      type: "success"
